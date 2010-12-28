@@ -1,0 +1,1022 @@
+%%
+%% titlepage.tex
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+
+\ProvidesFile{titlepage.tex}[2009/10/30 v0.1a demo document and file generator]
+\documentclass[a4paper,pagesize]{scrbook}
+
+\usepackage{filecontents}
+
+% --------------------------------------------------------------------------
+\begin{filecontents}{titlepage.sty}
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+%% This file may only be distributed together with a copy of titlepage.tex.
+%% You may however distribute titlepage.tex without such generated files.
+%% 
+\ProvidesPackage{titlepage}[2010/10/13 v0.1d alpha package]
+\RequirePackage{scrbase}
+\DefineFamily{title}
+\DefineFamilyMember{title}
+\newcommand*{\TitleOptions}{\FamilyOptions{title}}% Verwendung wie \KOMAoptions
+\newcommand*{\TitleOption}{\FamilyOption{title}}% Verwendung wie \KOMAoption
+
+\newcounter{titlepage}\setcounter{titlepage}{\@ne}
+\DefineFamilyKey{title}{pagenumber}{\setcounter{titlepage}{#1}}
+
+\providecommand*{\titlepagestyle}{}
+\renewcommand*{\titlepagestyle}{empty}
+\DefineFamilyKey{title}{pagestyle}{\renewcommand*{\titlepagestyle}{#1}}
+
+\ifcsname @restonecolfalse\endcsname
+  \expandafter\@gobble
+\else
+  \expandafter\@firstofone
+\fi
+{\newif\if@restonecol}
+\scr@ifundefinedorrelax{titlepage}{\def\titlepage{}}{}
+\scr@ifundefinedorrelax{endtitlepage}{\def\endtitlepage{}}{}
+\providecommand*{\maketitle}[1][]{}
+
+% Set of commands, that define a title style:
+\newcommand*{\tp@undefinedtitle}[1]{%
+  \PackageInfo{titlepage}{leaving not defined #1-title page empty}%
+}
+\newcommand*{\inittitle}{}
+\newcommand*{\makepretitle}{\tp@undefinedtitle{pre}}
+\newcommand*{\makepretitleback}{\tp@undefinedtitle{back of pre}}
+\newcommand*{\makemaintitle}{\tp@undefinedtitle{main}}
+\newcommand*{\makemaintitleback}{\tp@undefinedtitle{back of main}}
+\newcommand*{\makeposttitle}{\tp@undefinedtitle{post}}
+\newcommand*{\makeposttitleback}{\tp@undefinedtitle{back of post}}
+
+% Will be called before loading a title style:
+\newcommand*{\inittitlestyle}{%
+  % Das optionale Argument ist die gewünschte Nummer für die Titelseite.
+  \renewenvironment{titlepage}[1][]{%
+    \TitleOptions{##1}%
+    \clearpage
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \ifx\titlepagestyle\@empty\else\thispagestyle{\titlepagestyle}\fi
+    \ifodd\value{page}% aktuelle Seite ist ungerade
+      \ifodd\value{titlepage}% gewünschte Seitennummer ist ungerade
+      \else% gewünschte Seitenummer ist gerade
+        \null\newpage % Leerseite
+      \fi
+    \else% aktuelle Seite ist gerade
+      \ifodd\value{titlepage}% gewünschte Seitennummer ist ungerade
+        \null\newpage % Leerseite
+      \fi
+    \fi
+    \setcounter{page}{\value{titlepage}}%
+    \ifx\titlepagestyle\@empty\else\thispagestyle{\titlepagestyle}\fi
+  }{%
+    \if@restonecol\twocolumn \else \newpage\fi
+    \stepcounter{titlepage}%
+  }%
+
+  \renewcommand*{\maketitle}[1][]{%
+    \begingroup
+      \TitleOptions{##1}%
+      \inittitle
+      \makepretitle\if@twoside\makepretitleback\fi
+      \makemaintitle\if@twoside\makemaintitleback\fi
+      \makeposttitle\if@twoside\makeposttitleback\fi
+    \endgroup
+  }%
+
+  \renewcommand*{\inittitle}{}%
+  \renewcommand*{\makepretitle}{\tp@undefinedtitle{pre}}%
+  \renewcommand*{\makepretitleback}{\tp@undefinedtitle{back of pre}}%
+  \renewcommand*{\makemaintitle}{\tp@undefinedtitle{main}}%
+  \renewcommand*{\makemaintitleback}{\tp@undefinedtitle{back of main}}%
+  \renewcommand*{\makeposttitle}{\tp@undefinedtitle{post}}%
+  \renewcommand*{\makeposttitleback}{\tp@undefinedtitle{back of post}}%
+}
+
+\inittitlestyle
+
+% New environment for full page titles (with respect to BCOR or
+% Gm@bindingoffset if defined)
+\newsavebox\titlebox
+\newenvironment{fullsizetitle}[1][]{%
+  \TitleOptions{#1}%
+  \begin{lrbox}{\titlebox}
+    \hsize\paperwidth
+    \scr@ifundefinedorrelax{ta@bcor}{%
+      \scr@ifundefinedorrelax{Gm@bindingoffset}{}{%
+        \advanve\hsize-\Gm@bindingoffset}%
+    }{%
+      \advance\hsize-\ta@bcor
+      \scr@ifundefinedorrelax{Gm@bindingoffset}{}{%
+        \ifdim \Gm@bindingoffset=\ta@bcor\else
+          \PackageWarning{titlepage}{ignorring geometry's binding
+            correction,\MessageBreak
+            using typearea's binding correction.\MessageBreak
+            If you're using geometry and typearea,\MessageBreak
+            you should set both options to same value,\MessageBreak
+            e.g. \string\KOMAoptions{BCOR=\ta@bcor}\MessageBreak
+            \space\space\space\space\space
+            \string\geometry{bindingoffset=\ta@bbcor}\MessageBreak
+            to make titlepage use this value%
+          }%
+        \fi
+      }%        
+    }%
+    \vsize\paperheight
+    \linewidth\hsize
+    \columnwidth\hsize
+    \textwidth\hsize
+    \textheight\vsize
+    \noindent\minipage{\hsize}
+}{%
+    \endminipage
+  \end{lrbox}
+  \begin{titlepage}%
+    \vspace*{-1in}\vskip-\topmargin\vskip-\headheight\vskip-\headsep
+    \vskip-\topskip
+    \raggedright
+    \leavevmode
+    \hskip-1in
+    \ifodd\c@page
+      \hskip-\oddsidemargin
+      \scr@ifundefinedorrelax{ta@bcor}{%
+        \scr@ifundefinedorrelax{Gm@bindingoffset}{}{%
+          \hskip\Gm@bindingoffset}%
+      }{\hskip\ta@bcor}%
+    \else
+      \hskip-\evensidemargin
+    \fi
+    \vbox to\z@{\hsize\z@
+      \vskip-\baselineskip
+      \makebox[0pt][l]{\usebox\titlebox}%
+      \vss
+    }%
+  \end{titlepage}
+}
+
+% Define title page ``variables'':
+\DefineFamilyKey{title}{title}{\title{#1}}
+\DefineFamilyKey{title}{author}{\author{#1}}
+\DefineFamilyKey{title}{date}{\date{#1}}
+\providecommand*{\@subtitle}{}
+\providecommand*{\subtitle}[1]{\gdef\@subtitle{#1}}
+\DefineFamilyKey{title}{subtitle}{\subtitle{#1}}
+\newcommand*{\@university}{}
+\newcommand*{\university}[1]{\gdef\@university{#1}}
+\DefineFamilyKey{title}{university}{\university{#1}}
+\newcommand*{\@faculty}{}
+\newcommand*{\faculty}[1]{\gdef\@faculty{#1}}
+\DefineFamilyKey{title}{faculty}{\faculty{#1}}
+\newcommand*{\@chair}{}
+\newcommand*{\chair}[1]{\gdef\@chair{#1}}
+\DefineFamilyKey{title}{chair}{\chair{#1}}
+\newcommand*{\@professor}{}
+\newcommand*{\professor}[1]{\gdef\@professor{#1}}
+\DefineFamilyKey{title}{professor}{\professor{#1}}
+\providecommand*{\@subject}{}
+\providecommand*{\subject}[1]{\gdef\@subject{#1}}
+\DefineFamilyKey{title}{subject}{%
+  \ifstr{#1}{project}{\subject{\projectpapername}}{%
+    \ifstr{#1}{seminar}{\subject{\seminarpapername}}{%
+      \ifstr{#1}{studentreseach}{\subject{\studentreserachname}}{%
+        \ifstr{#1}{diploma}{\subject{\diplomathesisname}}{%
+          \ifstr{#1}{degree}{\subject{\degreethesisname}}{%
+            \ifstr{#1}{master}{\subject{\masterthesisname}}{%
+              \ifstr{#1}{bachelor}{\subject{\bachelorthesisname}}{%
+                \subject{#1}%
+              }%
+            }%
+          }%
+        }%
+      }%
+    }%
+  }%
+}
+\newcommand*{\@student}{\@author}
+\newcommand*{\student}[1]{\gdef\@author{#1}}
+\DefineFamilyKey{title}{student}{\student{#1}}
+\newcommand*{\@discipline}{}
+\newcommand*{\discipline}[1]{\gdef\@discipline{#1}}
+\DefineFamilyKey{title}{discipline}{\discipline{#1}}
+\newcommand*{\@matriculationnumber}{}
+\newcommand*{\matriculationnumber}[1]{\gdef\@matriculationnumber{#1}}
+\DefineFamilyKey{title}{matriculationnumber}{\matriculationnumber{#1}}
+\newcommand*{\@advisor}{}
+\newcommand*{\advisor}[1]{\gdef\@advisor{#1}}
+\DefineFamilyKey{title}{advisor}{\advisor{#1}}
+\newcommand*{\@place}{}
+\newcommand*{\place}[1]{\gdef\@place{#1}}
+\DefineFamilyKey{title}{place}{\place{#1}}
+\newcommand*{\@publisher}{\csname @publishers\endcsname}
+\newcommand{\publisher}[1]{\gdef\@publisher{#1}}
+\DefineFamilyKey{title}{publisher}{\publisher{#1}}
+
+% Load a title page style from file
+\newcommand*{\TitlePageStyle}[2][]{%
+  \IfFileExists{title-#2.def}{%
+    \begingroup
+      \edef\@tempa{\endgroup
+        \noexpand\inittitlestyle
+        \noexpand\makeatletter
+        \noexpand\input{title-#2.def}%
+        \noexpand\catcode`\noexpand\@=\the\catcode`\@
+      }%
+    \@tempa
+    \TitleOptions{#1}%
+  }{%
+    \PackageError{titlepage}{No title definition for `#2' found}{%
+      You've tried to set title page style `#2', but no title page
+      style definition file\MessageBreak
+      `title-#2.def' may be found%
+    }%
+  }
+}
+
+% Nice shortcut:
+\newcommand*{\NowButAfterBeginDocument}{%
+  \if@atdocument
+    \expandafter\@firstofone
+  \else
+    \expandafter\AtBeginDocument
+  \fi
+}
+
+\DeclareOption*{\expandafter\TitlePageStyle\expandafter{\CurrentOption}}
+\FamilyProcessOptions*\relax
+
+% Language dependent terms:
+\providecommand*\projectpapername{Project Paper}
+\providecommand*\seminarpapername{Seminar Paper}
+\providecommand*\studentresearchname{Student Research Project}
+\providecommand*\diplomathesisname{Diploma Thesis}
+\providecommand*\degreethesisname{Degree Thesis}
+\providecommand*\masterthesisname{Master Thesis}
+\providecommand*\bachelorthesisname{Bachelor Thesis}
+\newcommand*{\ordinal}{\englishordinal}
+\AtBeginDocument{%
+  \providecaptionname{english}\projectpapername{Project Paper}%
+  \providecaptionname{english}\seminarpapername{Seminar Paper}%
+  \providecaptionname{english}\studentresearchname{Student Research Project}%
+  \providecaptionname{english}\diplomathesisname{Diploma Thesis}%
+  \providecaptionname{english}\degreethesisname{Degree Thesis}%
+  \providecaptionname{english}\masterthesisname{Master Thesis}%
+  \providecaptionname{english}\bachelorthesisname{Bachelor Thesis}%
+  \providecaptionname{english}{\ordinal}{\englishordinal}%
+  \providecaptionname{german}\projectpapername{Projektarbeit}%
+  \providecaptionname{german}\seminarpapername{Seminararbeit}%
+  \providecaptionname{german}\studentresearchname{Studienarbeit}%
+  \providecaptionname{german}\diplomathesisname{Diplomarbeit}%
+  \providecaptionname{german}\degreethesisname{Dissertation}%
+  \providecaptionname{german}\masterthesisname{Master-Arbeit}%
+  \providecaptionname{german}\bachelorthesisname{Bachelor-Arbeit}%
+  \providecaptionname{german}{\ordinal}{\germanordinal}%
+  \providecaptionname{ngerman}\projectpapername{Projektarbeit}%
+  \providecaptionname{ngerman}\seminarpapername{Seminararbeit}%
+  \providecaptionname{ngerman}\studentresearchname{Studienarbeit}%
+  \providecaptionname{ngerman}\diplomathesisname{Diplomarbeit}%
+  \providecaptionname{ngerman}\degreethesisname{Dissertation}%
+  \providecaptionname{ngerman}\masterthesisname{Master-Arbeit}%
+  \providecaptionname{ngerman}\bachelorthesisname{Bachelor-Arbeit}%
+  \providecaptionname{ngerman}{\ordinal}{\germanordinal}%
+}
+
+\newcommand*{\englishordinal}[1]{%
+  \ifcsname engordnumber\endcsname
+    \engordnumber{#1}%
+  \else
+    \ifnum #1<\@ne
+      \PackageError{titlepage}{ordinal of `#1' not defined}{%
+        This package does only define english ordinals from 1}%
+    \else
+      \ifcase #1\or 1st\or 2nd\or 3rd\or 4th\or 5th\or 6th\or 7th\or 8th\or
+        9th\or 10th\else
+        \PackageError{titlepage}{ordinal of `#1' not defined}{%
+          This package does only define english ordinals from 1 to
+          10.\MessageBreak
+          You may load package `engord' to improve support of english
+          ordinals}%
+      \fi
+    \fi
+  \fi
+}
+\newcommand*{\germanordinal}[1]{%
+  \ifnum #1<\@ne
+    \PackageError{titlepage}{ordinal of `#1' not defined}{%
+      This package does only define german ordinals from 1}%
+  \else
+    #1.%
+  \fi
+}
+
+\end{filecontents}
+
+% --------------------------------------------------------------------------
+
+\begin{filecontents}{title-KOMAScript.def}
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+%% This file may only be distributed together with a copy of titlepage.tex.
+%% You may however distribute titlepage.tex without such generated files.
+%% 
+\ProvidesFile{title-KOMAScript.def}[2010/01/29 v0.1 alpha package]
+\DefineFamilyMember[KOMAScript]{title}
+
+\renewcommand*{\inittitle}{%
+  \let\footnotesize\small
+  \let\footnoterule\relax
+  \let\footnote\thanks
+  \renewcommand*\thefootnote{\@fnsymbol\c@footnote}%
+  \let\@oldmakefnmark\@makefnmark
+  \renewcommand*{\@makefnmark}{\rlap\@oldmakefnmark}%
+}
+
+\providecommand*{\@titlehead}{}
+\providecommand{\titlehead}[1]{\gdef\@titlehead{#1}}
+\DefineFamilyKey[KOMAScript]{title}{titlehead}{\titlehead{#1}}
+\providecommand*{\subject@font}{\bfseries}
+\DefineFamilyKey[KOMAScript]{title}{subjectfont}{%
+  \renewcommand*{\subject@font}{#1}%
+}
+\providecommand*{\titlefont}{\bfseries}
+\DefineFamilyKey[KOMAScript]{title}{titlefont}{%
+  \renewcommand*{\titlefont}{#1}%
+}
+\providecommand*{\@subtitlefont}{\bfseries}
+\DefineFamilyKey[KOMAScript]{title}{subtitlefont}{%
+  \renewcommand*{\@subtitlefont}{#1}%
+}
+\providecommand*{\publishers}{\publisher}
+
+\renewcommand*{\makemaintitle}{%
+  \begin{titlepage}
+    \setlength{\parskip}{\z@}%
+    \setlength{\parindent}{\z@}%
+    \setlength{\parfillskip}{\z@\@plus 1fil}%
+    \ifx\@titlehead\@empty \else
+      \begin{minipage}[t]{\textwidth}%
+        \@titlehead
+      \end{minipage}\par
+    \fi
+    \null\vfill
+    \begingroup
+      \centering
+      \ifx\@subject\@empty \else
+        {\subject@font \@subject \par}%
+        \vskip 3em
+      \fi
+      {\titlefont\huge \@title\par}%
+      \vskip 1em
+      {\ifx\@subtitle\@empty\else\@subtitlefont{\@subtitle}\par\fi}%
+      \vskip 2em
+      {\Large \lineskip 0.75em
+        \begin{tabular}[t]{c}
+          \@author
+        \end{tabular}\par
+      }%
+      \vskip 1.5em
+      {\Large \@date \par}%
+      \vskip \z@ \@plus3fill
+      {\Large \@publisher \par}%
+      \vskip 3em
+    \endgroup
+    \@thanks
+    \vfill\null\vskip-\baselineskip
+  \end{titlepage}
+}
+
+\providecommand*{\@uppertitleback}{}
+\providecommand{\uppertitleback}[1]{\gdef\@uppertitleback{#1}}
+\DefineFamilyKey[KOMAScript]{title}{uppertitleback}{\uppertitleback{#1}}
+\providecommand*{\@lowertitleback}{}
+\providecommand{\lowertitleback}[1]{\gdef\@lowertitleback{#1}}
+\DefineFamilyKey[KOMAScript]{title}{lowertitleback}{\lowertitleback{#1}}
+
+\renewcommand*{\makemaintitleback}{%
+  \begin{titlepage}
+    \begin{minipage}[t]{\textwidth}
+      \@uppertitleback
+    \end{minipage}\par
+    \vfill
+    \begin{minipage}[b]{\textwidth}
+      \@lowertitleback
+    \end{minipage}
+  \end{titlepage}
+}
+
+\providecommand*{\@extratitle}{}
+\providecommand{\extratitle}[1]{\gdef\@extratitle{#1}}
+\DefineFamilyKey[KOMAScript]{title}{extratitle}{\extratitle{#1}}
+\renewcommand*{\makepretitle}{%
+  \ifx\@extratitle\@empty\else
+    \begin{titlepage}
+      \noindent\@extratitle
+    \end{titlepage}
+  \fi
+}%
+\renewcommand*{\makepretitleback}{%
+  \ifx\@extratitle\@empty\else\begin{titlepage}\null\end{titlepage}\fi
+}
+\providecommand*{\@dedication}{}
+\providecommand{\dedication}[1]{\gdef\@dedication{#1}}
+\DefineFamilyKey[KOMAScript]{title}{dedication}{\dedication{#1}}
+\renewcommand*{\makeposttitle}{%
+  \ifx\@dedication\@empty\else
+    \begin{titlepage}
+      \null\vfill
+      {\centering \Large \@dedication \par}%
+      \vskip \z@ \@plus 3fill
+    \end{titlepage}
+  \fi
+}
+\renewcommand*{\makeposttitleback}{%
+  \ifx\@dedication\@empty\else\begin{titlepage}\null\end{titlepage}\fi
+}
+
+\endinput
+\end{filecontents}
+
+% --------------------------------------------------------------------------
+
+\begin{filecontents}{title-TU-Dresden.def}
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+%% This file may only be distributed together with a copy of titlepage.tex.
+%% You may however distribute titlepage.tex without such generated files.
+%% 
+\ProvidesFile{title-TU-Dresden.def}[2009/10/28 v0.1 alpha package]
+\DefineFamilyMember[tudresden]{title}
+\ifx\@university\@empty
+  \university{Technische\nobreakspace Universit\"at\nobreakspace Dresden}
+\fi
+\ifx\@place\@empty
+  \place{Dresden}
+\fi
+\providecommand*{\presentedbyname}{presented by}
+\providecommand*{\advisorname}{Advisor}
+\providecommand*{\thename}{}
+\NowButAfterBeginDocument{%
+  \providecaptionname{english}{\presentedbyname}{presented by}%
+  \providecaptionname{english}{\advisorname}{Advisor}%
+  \providecaptionname{english}{\thename}{}%
+  \providecaptionname{german}{\presentedbyname}{eingereicht von}%
+  \providecaptionname{german}{\advisorname}{Betreuer}%
+  \providecaptionname{german}{\thename}{den}%
+  \providecaptionname{ngerman}{\presentedbyname}{eingereicht von}%
+  \providecaptionname{ngerman}{\advisorname}{Betreuer}%
+  \providecaptionname{ngerman}{\thename}{den}%
+}
+\FamilyBoolKey[tudresden]{title}{blackborder}{blackborder}
+\renewcommand*{\makemaintitle}{%
+  \begin{fullsizetitle}
+    \rule{0pt}{5mm}\par
+    \ifblackborder
+      \leavevmode\hskip 1cm
+      \setlength{\fboxrule}{1pt}%
+      \expandafter\fbox
+    \else
+      \expandafter\mbox
+    \fi
+    {%
+       \begin{minipage}[t][\dimexpr\textheight-2.5cm\relax][t]{%
+           \dimexpr\linewidth\ifblackborder-3cm\fi\relax}
+        \sffamily
+        \centering
+        \vskip 3cm
+        {\fontsize{28pt}{34pt}\selectfont
+          \strut\ignorespaces\@university\unskip\strut\\}
+        {\fontsize{24pt}{28pt}\selectfont
+          \strut\ignorespaces\@faculty\unskip\strut\\}
+        {\fontsize{20pt}{24pt}\selectfont
+          \strut\ignorespaces\@chair\unskip\strut\\
+          \strut\ignorespaces\@professor\unskip\strut\\
+          \vfill
+          {\bfseries\strut\ignorespaces\@title\unskip\strut\\}
+          \strut\ignorespaces\@subject\unskip\strut\\
+          \vfill
+          \raggedright
+          \hspace*{.25\linewidth}%
+          \strut\ignorespaces\presentedbyname\unskip\strut\\
+          \hspace*{.25\linewidth}\quad
+          \begin{tabular}{@{}l@{}}
+            \strut\ignorespaces\@student\unskip\strut\\
+            \strut\ignorespaces\@discipline\unskip\strut\\
+            \strut\ignorespaces\@matriculationnumber\unskip\strut\\
+          \end{tabular}\\
+          \vskip\baselineskip
+          \hspace*{.25\linewidth}%
+          \strut\ignorespaces\advisorname\unskip:\strut\\
+          \hspace*{.25\linewidth}\quad
+          \begin{tabular}{@{}l@{}}
+            \strut\ignorespaces\@advisor\unskip\strut\\
+          \end{tabular}
+          \vskip2\baselineskip
+          \hspace*{.25\linewidth}%
+          \strut\ignorespaces\@place,\nobreakspace\thename\nobreakspace\@date
+          \par}
+        \vspace*{5mm}
+      \end{minipage}
+    }%
+  \end{fullsizetitle}
+}
+
+\endinput
+\end{filecontents}
+
+% --------------------------------------------------------------------------
+
+\begin{filecontents}{title-TU-HH.def}
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+%% This file may only be distributed together with a copy of titlepage.tex.
+%% You may however distribute titlepage.tex without such generated files.
+%% 
+\ProvidesFile{title-TU-HH.def}[2009/10/30 v0.1b alpha package]
+\DefineFamilyMember[TUHH]{title}
+\ifx\@university\@empty
+  \university{Technische\nobreakspace Universit\"at\nobreakspace
+    Hamburg-Harburg}
+\fi
+\ifx\@place\@empty
+  \place{Hamburg}
+\fi
+
+\providecommand*{\@degree}{}
+\providecommand*{\degree}[1]{\gdef\@degree{#1}}
+\DefineFamilyKey[TUHH]{title}{degree}{\degree{#1}}
+
+\FamilyBoolKey[TUHH]{title}{final}{final}
+
+\providecommand*{\presentationformation}{%
+  \iffinal Of the \else The \fi Graduation Committee of the\\
+  \@university\\[.5ex]
+  to the Acquisition of the Academic Degree\\[.5ex]
+  \@degree\\[.5ex]
+  \iffinal approved \else submitted \fi\@subject}
+\providecommand*{\fromname}{from}
+\providecommand*{\fromplacename}{from}
+\providecommand*{\refereename}{Referee}
+\providecommand*{\oralexaminationdatename}{Date of Oral Examination}
+\NowButAfterBeginDocument{%
+  \providecaptionname{english}{\presentationformation}{%
+  \iffinal Of the \else The \fi Graduation Committee of the\\
+  \@university\\[.5ex]
+  to the Acquisition of the Academic Degree\\[.5ex]
+  \@degree\\[.5ex]
+  \iffinal approved \else submitted \fi\@subject}
+  \providecaptionname{english}{\fromname}{from}
+  \providecaptionname{english}{\fromplacename}{from}
+  \providecaptionname{english}{\refereename}{Referee}
+  \providecaptionname{english}{\oralexaminationdatename}{Date of Oral Examination}
+  \providecaptionname{german}{\presentationformation}{%
+    \iffinal Vom \else Dem \fi Promotionsausschuss der\\
+    \@university\\[.5ex]
+    zur Erlangung des akademischen Grades\\[.5ex]
+    \@degree\\[.5ex]
+    \iffinal genehmigte \else vorgelegte \fi\@subject}%
+  \providecaptionname{german}{\fromname}{von}%
+  \providecaptionname{german}{\fromplacename}{aus}%
+  \providecaptionname{german}{\refereename}{Gutachter}%
+  \providecaptionname{german}{\oralexaminationdatename}{Datum der mündlichen
+    Prüfung}% 
+  \providecaptionname{ngerman}{\presentationformation}{%
+    \iffinal Vom \else Dem \fi Promotionsausschuss der\\
+    \@university\\[.5ex]
+    zur Erlangung des akademischen Grades\\[.5ex]
+    \@degree\\[.5ex]
+    \iffinal genehmigte \else vorgelegte \fi\@subject}%
+  \providecaptionname{ngerman}{\fromname}{von}%
+  \providecaptionname{ngerman}{\fromplacename}{aus}%
+  \providecaptionname{ngerman}{\refereename}{Gutachter}%
+  \providecaptionname{ngerman}{\oralexaminationdatename}{Datum der mündlichen
+    Prüfung}% 
+}
+\renewcommand*{\makemaintitle}{%
+  \begin{fullsizetitle}
+    \sffamily
+    \centering
+    \vspace{5cm}
+    {\LARGE\bfseries\strut\ignorespaces\@title\\}
+    {\Large\strut\ignorespaces\@subtitle\\}
+    \vspace{2.5cm}
+    {\Large\presentationformation\\}
+    \vspace{2.5cm}
+    {\Large\strut\ignorespaces\fromname\\
+      \strut\ignorespaces\@student\\}
+    \vspace{2.5cm}
+    {\Large\strut\ignorespaces\fromplacename\\
+      \strut\ignorespaces\@place\\}
+    \vspace{2.5cm}
+    {\Large\@date}
+  \end{fullsizetitle}
+}
+
+\providecommand*{\@referee}{}
+\providecommand*{\referee}[1]{\gdef\@referee{#1}}
+\DefineFamilyKey[TUHH]{title}{referee}{\referee{#1}}
+
+\renewcommand*{\makemaintitleback}{%
+  \begin{titlepage}
+    \vspace*{\fill}
+    \iffinal
+      \@tempcnta\z@
+      \def\and{%
+        \par\advance\@tempcnta by\@ne
+        \@hangfrom{%
+          \expandafter\ordinal\expandafter{\the\@tempcnta}~\refereename:\enskip
+        }%
+      }\and\@referee
+    \fi
+    \vskip 1cm
+    \iffinal\@hangfrom{\oralexaminationdatename:\enskip}{\@oralexamdate}\fi
+  \end{titlepage}
+}
+
+\providecommand*{\@oralexamdate}{}
+\providecommand*{\oralexamdate}[1]{\gdef\@oralexamdate{#1}}
+\DefineFamilyKey[TUHH]{title}{oralexamdate}{\oralexamdate{#1}}
+
+\endinput
+\end{filecontents}
+
+% --------------------------------------------------------------------------
+
+\begin{filecontents}{title-Markus-1.def}
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+%% This file may only be distributed together with a copy of titlepage.tex.
+%% You may however distribute titlepage.tex without such generated files.
+%% 
+\ProvidesFile{title-Markus-1.def}[2010/12/12 v0.1a alpha package]
+\DefineFamilyMember[Markus]{title}
+
+\renewcommand*{\makemaintitle}{%
+  \begin{titlepage}
+    \raggedright
+    \csname @titlepagefont\endcsname{% use it if defined
+      {\csname subject@font\endcsname{%
+          \large\strut\ignorespaces\@subject\par\vskip 2\baselineskip}}%
+      {\csname titlefont\endcsname{\LARGE\strut\ignorespaces\@title\par}}%
+      {\csname @subtitlefont\endcsname{%
+          \large\vskip.5\baselineskip\strut\ignorespaces\@subtitle\par}}%
+      \vfill
+      {\csname @datefont\endcsname{\large\strut\ignorespaces\@date\par}}%
+    }%
+  \end{titlepage}
+}
+
+\renewcommand*{\makemaintitleback}{%
+  \begin{titlepage}
+    \csname @uppertitleback\endcsname\vfill\csname @lowertitleback\endcsname
+  \end{titlepage}
+}
+
+\renewcommand*{\makepretitle}{%
+  \begin{titlepage}
+    \raggedleft
+    {\csname @titlepagefont\endcsname{%
+        \large\strut\ignorespaces\@publisher\par}}%
+  \end{titlepage}
+}
+
+\renewcommand*{\makepretitleback}{%
+  \begin{titlepage}
+    \raggedleft
+    {\csname @titlepagefont\endcsname{%
+        \large\null\vskip 2\baselineskip
+        \LARGE\strut{\def\and{\hspace{1em}\linebreak[3]}%
+          \csname @authorfont\endcsname{\large\ignorespaces\@author}\par}}}%
+  \end{titlepage}
+}
+
+\renewcommand*{\makeposttitle}{%
+  \scr@ifundefinedorrelax{@dedication}{}{%
+    \ifx\@dedication\@empty\else
+      \begin{titlepage}
+        \null\vfill
+        {\centering\csname @dedicationfont\endcsname{\Large \@dedication \par}}%
+        \vskip \z@ \@plus 3fill
+      \end{titlepage}
+    \fi
+  }%
+}
+
+\renewcommand*{\makeposttitleback}{%
+  \scr@ifundefinedorrelax{@dedication}{}{%
+    \ifx\@dedication\@empty\else\begin{titlepage}\null\end{titlepage}\fi
+  }%
+}
+
+\endinput
+\end{filecontents}
+% --------------------------------------------------------------------------
+
+\begin{filecontents}{title-Markus-2.def}
+%% Copyright (c) Markus Kohm, 2009-2010
+%%
+%% !!!! ALPHA VERSION !!!!
+%%
+%% This file was generated from file titlepage.tex.
+%%
+%% It may be distributed and/or modified under the conditions of 
+%% version 1.3c of the LaTeX Project Public License, that is part
+%% of all distribution of LaTeX version 2005/12/01 or later.
+%%
+%% This file has the LPPL maintenance status "maintained".
+%%
+%% This file may only be distributed together with a copy of titlepage.tex.
+%% You may however distribute titlepage.tex without such generated files.
+%% 
+\ProvidesFile{title-Markus-2.def}[2010/12/12 v0.1a alpha package]
+\DefineFamilyMember[Markus]{title}
+
+\newcommand*{\ps@maintitle}{%
+  \ps@empty
+  \def\@oddhead{%
+    \parbox[b][\headheight][b]{\hsize}{\csname @titlepagefont\endcsname{%
+        \csname @titlehead\endcsname}}%
+  }%
+  \let\@evenhead\@oddhead
+}
+
+\newcommand*{\title@rulewidth}{0pt}
+\newcommand*{\title@rulesep}{\ifdim \title@rulewidth>\z@ 10pt\else \z@\fi}
+\DefineFamilyKey[Markus]{title}{rulewidth}{%
+  \global\edef\title@rulewidth{\dimexpr #1\relax}%
+}
+\DefineFamilyKey[Markus]{title}{rulesep}{%
+  \global\edef\title@rulesep{\dimexpr #1\relax}%
+}
+
+\renewcommand*{\makemaintitle}{%
+  \begin{titlepage}
+    \raggedright
+    \thispagestyle{maintitle}%
+    \csname @titlepagefont\endcsname{%
+      \raisebox{0pt}[\ht\strutbox][\dimexpr\textheight-\ht\strutbox\relax]{%
+        \rule[\dimexpr-.667\headsep-\textheight\relax]
+             {\title@rulewidth}
+             {\dimexpr\textheight+2\headsep\relax}\kern\title@rulesep}%
+      \parbox[t][\textheight][t]
+             {\dimexpr \textwidth-\title@rulewidth-\title@rulesep\relax}{%
+        \raggedright
+        {\csname subject@font\endcsname{%
+            \large\strut\ignorespaces\@subject\par\vskip 2\baselineskip}}%
+        {\def\and{\\}\csname @authorfont\endcsname{\large\@author}\par
+          \vskip .5\baselineskip}%
+        {\csname titlefont\endcsname{\LARGE\strut\ignorespaces\@title\par}}%
+        {\csname @subtitlefont\endcsname{%
+            \large\vskip.5\baselineskip\strut\ignorespaces\@subtitle\par}}%
+        \vfill
+        {\csname @publisherfont\endcsname{\large\@publisher\par}}%
+        {\csname @datefont\endcsname{\large\strut\ignorespaces\@date\par}}%
+      }%
+    }%
+  \end{titlepage}
+}
+
+\renewcommand*{\makemaintitleback}{%
+  \begin{titlepage}
+    \csname @titlepagefont\endcsname{%
+      \csname @uppertitleback\endcsname\par
+      \vfill
+      \csname @lowertitleback\endcsname\par
+    }
+  \end{titlepage}
+}
+
+\renewcommand*{\makepretitle}{%
+  \scr@ifundefinedorrelax{@extratitle}{}{%
+    \ifx\@extratitle\@empty\else
+      \begin{titlepage}
+        \noindent\@extratitle
+      \end{titlepage}
+    \fi
+  }%
+}
+
+\renewcommand*{\makepretitleback}{%
+  \scr@ifundefinedorrelax{@extratitle}{}{%
+    \ifx\@extratitle\@empty\else\begin{titlepage}\null\end{titlepage}\fi
+  }%
+}
+
+\renewcommand*{\makeposttitle}{%
+  \scr@ifundefinedorrelax{@dedication}{}{%
+    \ifx\@dedication\@empty\else
+      \begin{titlepage}
+        \null\vfill
+        {\centering\csname @dedicationfont\endcsname{\Large\@dedication\par}}%
+        \vskip \z@ \@plus 3fill
+      \end{titlepage}
+    \fi
+  }%
+}
+
+\renewcommand*{\makeposttitleback}{%
+  \scr@ifundefinedorrelax{@dedication}{}{%
+    \ifx\@dedication\@empty\else\begin{titlepage}\null\end{titlepage}\fi
+  }%
+}
+
+\endinput
+
+\end{filecontents}
+% --------------------------------------------------------------------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{helvet}% Passt zwar nicht zu lmodern, ist aber oft verwendet!
+
+% --------------------------------------------------------------------------
+% So wird es verwendet:
+\usepackage{titlepage}
+
+\makeatletter
+\@ifpackagelater{scrbase}{2009/12/31}{}{%
+  % Alte Version von scrbase muss an zwei Stellen korrigiert werden:
+  \renewcommand\ifstr[2]{%
+    \begingroup\protected@edef\@tempa{#1}\protected@edef\@tempb{#2}%
+    \ifx\@tempa\@tempb
+      \endgroup\expandafter\@firstoftwo
+    \else
+      \endgroup\expandafter\@secondoftwo
+    \fi
+  }
+  \renewcommand*{\Family@Options}[3]{%
+    \@for\scr@key@atlist:=#2\do{%
+      \expandafter\scr@key@split@name@value\scr@key@atlist==\@nil
+      \scr@key@found@false
+      \edef\@tempa{\csname #1@key@familylist\endcsname}%
+      \@for\@tempa:=\@tempa\do{%
+        \scr@ifundefinedorrelax{KV@\@tempa @\scr@key@name}{}{%
+          \scr@key@found@true
+          \protected@edef\reserved@a{\noexpand\setkeys{\@tempa}{\scr@key@atlist}%
+            \noexpand\def\noexpand\@tempa{\@tempa}%
+            \noexpand\def\noexpand\scr@key@atlist{\scr@key@atlist}%
+            \noexpand\def\noexpand\scr@key@name{\scr@key@name}%
+            \noexpand\def\noexpand\scr@key@value{\scr@key@value}%
+          }%
+          \reserved@a
+        }%
+      }%
+      \ifscr@key@found@\else#3\fi
+    }%
+  }
+}
+\makeatother
+
+\begin{document}
+
+\TitlePageStyle{TU-Dresden}
+\maketitle[%
+  title={Titel im Stil \texttt{TU-Dresden}},
+  faculty={Fakultät Wirtschafswissenschaften},
+  chair={SAP-Stiftungslehrstuhl für\\
+    Entrepreneurship und Innovation},
+  professor={Prof.\,Dr.\,Michael Schefcyk},
+%  subject=diploma, % one of: project, seminar, studentresearch,
+%                   % diploma, degree, master, bachelor, or ...
+  subject={Seminararbeit\\(bzw. Diplomarbeit)},% ... direct value
+  student={Vorname und Name},
+  discipline={Studienrichtung},
+  matriculationnumber={Matrikel-Nr.},
+  advisor={(mit akadem. Grad, Vor- und Zuname)},
+  date={(Datum der Abgabe)}
+]
+
+\TitleOptions{pagenumber=1,blackborder}% Dasselbe mit Trauerrand
+\maketitle % da alle anderen Angaben bereits oben vorgenommen wurden
+
+\TitlePageStyle[pagenumber=1]{KOMAScript}
+\maketitle[
+  extratitle={Das ist ein Schmutztitel im Stil \texttt{KOMAScript}},
+  titlehead={Den Kopfbereich kann man auf diese Weise füllen.},
+  subject={Eine Klassifizierung der Arbeit},
+  title={Titel im Stil \texttt{KOMAScript}},
+  subtitle={Untertitel},
+  publisher={Einen Verlag kann man ebenfalls angeben},
+  uppertitleback={Oberer Bereich der Rückseite des Haupttitels im Stil
+    \texttt{KOMAScript}.},
+  lowertitleback={Unterer Bereich der Rückseite des Haupttitels im Stil
+    \texttt{KOMAScript}.},
+  dedication={Eine Widmung im Stil \texttt{KOMAScript}}
+]
+
+\TitlePageStyle[pagenumber=1]{TU-HH}
+\maketitle[%
+  final,
+  title={Titel im Stil \texttt{TU-HH}},
+  university={Technischen Universität Hamburg-Harburg},
+  subject=degree,
+  degree={Doktor der Naturwissenschaften (Dr.\,rer.\,nat\,)},
+  place={(Geburtsort)},
+  date={(aktuelles Jahr)},
+  referee={Name des ersten Gutachters\protect\and Name des zweiten
+    Gutachters},
+  oralexamdate={29. Februar 2009}
+]
+
+\makeatletter\providecommand*{\@titlepagefont}{\normalfont\sffamily}\makeatother
+\setkomafont{subject}{\normalfont\sffamily}
+\setkomafont{title}{\normalfont\sffamily}
+\TitlePageStyle[pagenumber=1]{Markus-1}
+\maketitle[%
+  title={Titel im Stil \texttt{Markus-1}},
+  subject={Eine Klassifizierung der Arbeit},
+  subtitle={Untertitel},
+  publisher={Verlag},
+  uppertitleback={Oberer Bereich der Rückseite des Haupttitels im Stil
+    \texttt{Markus-1}.},
+  lowertitleback={Unterer Bereich der Rückseite des Haupttitels im Stil
+    \texttt{Markus-1}.},
+  dedication={Eine Widmung im Stil \texttt{Markus-1}},
+  author={Markus~Kohm\protect\and Sonst~Jemand}
+]
+
+\TitlePageStyle[pagenumber=1]{Markus-2}
+\maketitle[%
+  rulewidth=2pt,
+  extratitle={Das ist ein Schmutztitel im Stil \texttt{Markus-2}},
+  title={Titel im Stil \texttt{Markus-2}},
+  subject={Eine Klassifizierung der Arbeit},
+  subtitle={Untertitel},
+  publisher={Verlag},
+  uppertitleback={Oberer Bereich der Rückseite des Haupttitels im Stil
+    \texttt{Markus-2}.},
+  lowertitleback={Unterer Bereich der Rückseite des Haupttitels im Stil
+    \texttt{Markus-2}.},
+  dedication={Eine Widmung im Stil \texttt{Markus-2}},
+  titlehead={},%
+  author={Markus~Kohm}
+]
+
+
+\end{document}
