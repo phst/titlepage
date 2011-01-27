@@ -74,6 +74,7 @@ install-source: $(source)
 install-complete: install install-pdf install-source
 
 $(destination): $(source)
+	rm -f -- $(destination) $(definitions)
 	$(LATEX) $(source)
 
 $(manual): $(source) $(destination)
